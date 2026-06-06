@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java 从入门到精通 - 可视化教程</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --wu-green: #1E4D3B;
+            --wu-green-light: #2E6B54;
+            --wu-green-dark: #153A2B;
+            --wu-gold: #C9A962;
+            --wu-gold-light: #D4B870;
+            --wu-beige: #F5F3EF;
+            --wu-cream: #FAF8F5;
+            --wu-text: #333333;
+            --wu-text-light: #666666;
+        }
+        body {
+            font-family: 'SimSun', 'STSong', 'Microsoft YaHei', serif;
+            background: linear-gradient(135deg, var(--wu-beige) 0%, var(--wu-cream) 100%);
+            min-height: 100vh;
+        }
+        .container { display: flex; height: 100vh; }
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--wu-green) 0%, var(--wu-green-dark) 100%);
+            padding: 25px;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(30, 77, 59, 0.3);
+            border-right: 3px solid var(--wu-gold);
+        }
+        .sidebar h1 {
+            font-size: 18px;
+            color: var(--wu-gold);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--wu-gold);
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--wu-gold-light);
+            margin-top: 18px;
+            margin-bottom: 8px;
+            padding-left: 10px;
+            border-left: 3px solid var(--wu-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .menu-item {
+            display: block;
+            padding: 10px 12px;
+            margin: 3px 0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: var(--wu-gold);
+            padding-left: 18px;
+        }
+        .menu-item.active {
+            background: rgba(201, 169, 98, 0.2);
+            color: var(--wu-gold);
+            border-left-color: var(--wu-gold);
+            font-weight: bold;
+        }
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(30, 77, 59, 0.08);
+            border-top: 4px solid var(--wu-green);
+        }
+        .card h2 {
+            font-size: 20px;
+            color: var(--wu-green);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--wu-beige);
+            font-weight: bold;
+        }
+        .card h3 {
+            font-size: 15px;
+            color: var(--wu-green-light);
+            margin: 15px 0 10px;
+            padding-left: 10px;
+            border-left: 3px solid var(--wu-gold);
+            font-weight: bold;
+        }
+        .card p { line-height: 1.7; color: var(--wu-text-light); margin: 10px 0; }
+        .code-block {
+            background: linear-gradient(180deg, #2C3E50 0%, #1A252F 100%);
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid #34495E;
+        }
+        .code-block pre {
+            color: #ECF0F1;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre;
+            margin: 0;
+        }
+        .result-block {
+            background: linear-gradient(135deg, #F8FAF9 0%, #F0F5F2 100%);
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            color: var(--wu-text);
+            border-left: 4px solid var(--wu-green);
+        }
+        .table-container { overflow-x: auto; margin: 15px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 10px 12px; border-bottom: 1px solid var(--wu-beige); text-align: left; }
+        th {
+            background: linear-gradient(180deg, var(--wu-green) 0%, var(--wu-green-dark) 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        tr:hover { background: rgba(30, 77, 59, 0.05); }
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(30, 77, 59, 0.1);
+            color: var(--wu-green);
+            border-radius: 20px;
+            font-size: 11px;
+            margin: 3px;
+            border: 1px solid rgba(30, 77, 59, 0.2);
+        }
+        .tag-file { background: rgba(201, 169, 98, 0.15); color: #8B7355; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; max-height: 300px; }
+            .main-content { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>Java 学习指南</h1>
+            <div class="section-title">基础入门</div>
+            <a href="#" class="menu-item" onclick="showSection('intro', this); return false;">Java 概述</a>
+            <a href="#" class="menu-item" onclick="showSection('compile', this); return false;">编译与运行</a>
+            <a href="#" class="menu-item" onclick="showSection('structure', this); return false;">程序结构</a>
+            <div class="section-title">基础语法</div>
+            <a href="#" class="menu-item" onclick="showSection('variables', this); return false;">变量与数据类型</a>
+            <a href="#" class="menu-item" onclick="showSection('operators', this); return false;">运算符详解</a>
+            <a href="#" class="menu-item" onclick="showSection('control', this); return false;">控制流程</a>
+            <a href="#" class="menu-item" onclick="showSection('string', this); return false;">字符串操作</a>
+            <a href="#" class="menu-item" onclick="showSection('typeconversion', this); return false;">类型转换</a>
+            <div class="section-title">面向对象</div>
+            <a href="#" class="menu-item" onclick="showSection('person', this); return false;">类与封装</a>
+            <a href="#" class="menu-item" onclick="showSection('student', this); return false;">继承与多态</a>
+            <a href="#" class="menu-item" onclick="showSection('innerclass', this); return false;">内部类</a>
+            <a href="#" class="menu-item" onclick="showSection('interface', this); return false;">接口与抽象类</a>
+            <div class="section-title">数据结构</div>
+            <a href="#" class="menu-item" onclick="showSection('arrays', this); return false;">数组操作</a>
+            <a href="#" class="menu-item" onclick="showSection('collection', this); return false;">集合框架</a>
+            <a href="#" class="menu-item" onclick="showSection('queuestack', this); return false;">队列与栈</a>
+            <a href="#" class="menu-item" onclick="showSection('map', this); return false;">Map详解</a>
+            <div class="section-title">异常处理</div>
+            <a href="#" class="menu-item" onclick="showSection('exception', this); return false;">异常基础</a>
+            <a href="#" class="menu-item" onclick="showSection('exception2', this); return false;">自定义异常</a>
+            <div class="section-title">IO操作</div>
+            <a href="#" class="menu-item" onclick="showSection('file', this); return false;">文件读写</a>
+            <a href="#" class="menu-item" onclick="showSection('nio', this); return false;">NIO与序列化</a>
+            <div class="section-title">高级语法</div>
+            <a href="#" class="menu-item" onclick="showSection('generics', this); return false;">泛型</a>
+            <a href="#" class="menu-item" onclick="showSection('lambda', this); return false;">Lambda表达式</a>
+            <a href="#" class="menu-item" onclick="showSection('stream', this); return false;">Stream API</a>
+            <a href="#" class="menu-item" onclick="showSection('enum', this); return false;">枚举</a>
+            <div class="section-title">设计模式</div>
+            <a href="#" class="menu-item" onclick="showSection('singleton', this); return false;">单例模式</a>
+            <a href="#" class="menu-item" onclick="showSection('factory', this); return false;">工厂模式</a>
+            <div class="section-title">并发编程</div>
+            <a href="#" class="menu-item" onclick="showSection('thread', this); return false;">多线程基础</a>
+            <a href="#" class="menu-item" onclick="showSection('threadpool', this); return false;">线程池</a>
+            <a href="#" class="menu-item" onclick="showSection('sync', this); return false;">同步机制</a>
+            <a href="#" class="menu-item" onclick="showSection('callable', this); return false;">Callable与Future</a>
+            <div class="section-title">JVM原理</div>
+            <a href="#" class="menu-item" onclick="showSection('jvmmemory', this); return false;">JVM内存模型</a>
+            <a href="#" class="menu-item" onclick="showSection('gc', this); return false;">垃圾回收</a>
+            <div class="section-title">网络编程</div>
+            <a href="#" class="menu-item" onclick="showSection('socket', this); return false;">Socket编程</a>
+        </div>
+        <div class="main-content">
+            <div id="intro" class="content-section active">
+                <div class="card">
+                    <h2>Java 从入门到精通</h2>
+                    <p>本教程涵盖从基础语法到高级特性的所有内容，每个知识点都有对应的代码示例。</p>
+                    <p style="margin-top:15px;"><strong>学习资源：</strong></p>
+                    <span class="tag tag-file">README.md</span> 完整学习指南
+                    <span class="tag tag-file">run.bat</span> 一键运行脚本
+                </div>
+                <div class="card">
+                    <h2>项目结构（与代码一一对应）</h2>
+                    <div class="code-block">
+<pre>basic/
+├── basic_syntax/             <span style="color:#C9A962;"># 基础语法</span>
+│   ├── Variables.java         <span style="color:#C9A962;"># 变量与数据类型</span>
+│   ├── ControlFlow.java       <span style="color:#C9A962;"># 控制流程</span>
+│   ├── OperatorsDemo.java     <span style="color:#C9A962;"># 运算符详解</span>
+│   ├── StringOperations.java  <span style="color:#C9A962;"># 字符串操作</span>
+│   └── TypeConversion.java    <span style="color:#C9A962;"># 类型转换</span>
+├── object_oriented/          <span style="color:#C9A962;"># 面向对象</span>
+│   ├── Person.java            <span style="color:#C9A962;"># 类与封装</span>
+│   ├── Student.java           <span style="color:#C9A962;"># 继承与多态</span>
+│   ├── InnerClassesDemo.java  <span style="color:#C9A962;"># 内部类</span>
+│   └── InterfaceDetailsDemo.java <span style="color:#C9A962;"># 接口与抽象类</span>
+├── data_structures/          <span style="color:#C9A962;"># 数据结构</span>
+│   ├── ArraysDemo.java       <span style="color:#C9A962;"># 数组</span>
+│   ├── CollectionDemo.java     <span style="color:#C9A962;"># 集合框架</span>
+│   ├── QueueStackDemo.java    <span style="color:#C9A962;"># 队列与栈</span>
+│   └── MapDetailsDemo.java    <span style="color:#C9A962;"># Map详解</span>
+├── exception_handling/       <span style="color:#C9A962;"># 异常处理</span>
+│   ├── ExceptionDemo.java     <span style="color:#C9A962;"># 异常基础</span>
+│   └── ExceptionDetailsDemo.java <span style="color:#C9A962;"># 自定义异常</span>
+├── io_operations/            <span style="color:#C9A962;"># IO操作</span>
+│   ├── FileDemo.java         <span style="color:#C9A962;"># 文件读写</span>
+│   └── NioSerializationDemo.java <span style="color:#C9A962;"># NIO与序列化</span>
+├── advanced_syntax/           <span style="color:#C9A962;"># 高级语法</span>
+│   ├── GenericsDemo.java     <span style="color:#C9A962;"># 泛型</span>
+│   ├── LambdaDemo.java       <span style="color:#C9A962;"># Lambda表达式</span>
+│   ├── StreamDemo.java       <span style="color:#C9A962;"># Stream API</span>
+│   └── EnumDemo.java         <span style="color:#C9A962;"># 枚举</span>
+├── advanced_oop/             <span style="color:#C9A962;"># 设计模式</span>
+│   ├── SingletonDemo.java    <span style="color:#C9A962;"># 单例模式</span>
+│   └── FactoryPatternDemo.java <span style="color:#C9A962;"># 工厂模式</span>
+├── concurrency/              <span style="color:#C9A962;"># 并发编程</span>
+│   ├── ThreadDemo.java       <span style="color:#C9A962;"># 多线程基础</span>
+│   ├── ThreadPoolDemo.java   <span style="color:#C9A962;"># 线程池</span>
+│   ├── SynchronizationDemo.java <span style="color:#C9A962;"># 同步机制</span>
+│   └── CallableFutureDemo.java <span style="color:#C9A962;"># Callable与Future</span>
+├── jvm/                      <span style="color:#C9A962;"># JVM原理</span>
+│   ├── JVMMemoryDemo.java    <span style="color:#C9A962;"># JVM内存模型</span>
+│   └── GarbageCollectionDemo.java <span style="color:#C9A962;"># 垃圾回收</span>
+└── network/                  <span style="color:#C9A962;"># 网络编程</span>
+    ├── SocketServer.java     <span style="color:#C9A962;"># Socket服务器</span>
+    └── SocketClient.java     <span style="color:#C9A962;"># Socket客户端</span></pre>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2>编译运行速查表</h2>
+                    <div class="table-container">
+                        <table>
+                            <tr><th>操作</th><th>命令</th></tr>
+                            <tr><td>编译所有文件</td><td><code>javac -encoding UTF-8 */*.java</code></td></tr>
+                            <tr><td>运行带包类</td><td><code>java basic_syntax.Variables</code></td></tr>
+                            <tr><td>一键运行</td><td><code>run.bat</code></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="compile" class="content-section">
+                <div class="card">
+                    <h2>Java 编译与运行</h2>
+                    <h3>编译流程</h3>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;"># 编译</span>
+javac -encoding UTF-8 Hello.java
+
+<span style="color:#6a9955;"># 运行</span>
+java Hello
+
+<span style="color:#6a9955;"># 带包编译运行</span>
+javac -encoding UTF-8 -d . package/ClassName.java
+java package.ClassName</pre>
+                    </div>
+                    <h3>.java 与 .class 的区别</h3>
+                    <div class="table-container">
+                        <table>
+                            <tr><th>文件类型</th><th>内容</th><th>生成方式</th></tr>
+                            <tr><td>.java</td><td>源代码（人类可读）</td><td>开发者编写</td></tr>
+                            <tr><td>.class</td><td>字节码（JVM可执行）</td><td>javac编译生成</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="variables" class="content-section">
+                <div class="card">
+                    <h2>变量与数据类型</h2>
+                    <span class="tag tag-file">Variables.java</span>
+                    <h3>8种基本数据类型</h3>
+                    <div class="table-container">
+                        <table>
+                            <tr><th>类型</th><th>关键字</th><th>大小</th><th>示例</th></tr>
+                            <tr><td>字节型</td><td>byte</td><td>1字节</td><td><code>byte b = 10;</code></td></tr>
+                            <tr><td>短整型</td><td>short</td><td>2字节</td><td><code>short s = 100;</code></td></tr>
+                            <tr><td>整型</td><td>int</td><td>4字节</td><td><code>int i = 1000;</code></td></tr>
+                            <tr><td>长整型</td><td>long</td><td>8字节</td><td><code>long l = 10000L;</code></td></tr>
+                            <tr><td>单精度</td><td>float</td><td>4字节</td><td><code>float f = 3.14f;</code></td></tr>
+                            <tr><td>双精度</td><td>double</td><td>8字节</td><td><code>double d = 3.14;</code></td></tr>
+                            <tr><td>布尔型</td><td>boolean</td><td>1位</td><td><code>boolean b = true;</code></td></tr>
+                            <tr><td>字符型</td><td>char</td><td>2字节</td><td><code>char c = 'A';</code></td></tr>
+                        </table>
+                    </div>
+                    <h3>代码示例</h3>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">package</span> basic_syntax;
+<span style="color:#C9A962;">public class</span> Variables {
+    <span style="color:#C9A962;">public static void</span> main(String[] args) {
+        <span style="color:#C9A962;">byte</span> byteValue = 10;
+        <span style="color:#C9A962;">int</span> intValue = 1000;
+        <span style="color:#C9A962;">double</span> doubleValue = 3.1415926;
+        <span style="color:#C9A962;">boolean</span> boolValue = <span style="color:#C9A962;">true</span>;
+        <span style="color:#C9A962;">String</span> stringValue = <span style="color:#CE9178;">"你好 Java"</span>;
+        
+        System.out.println(<span style="color:#CE9178;">"字节型: "</span> + byteValue);
+        System.out.println(<span style="color:#CE9178;">"整型: "</span> + intValue);
+        System.out.println(<span style="color:#CE9178;">"双精度浮点: "</span> + doubleValue);
+        System.out.println(<span style="color:#CE9178;">"布尔值: "</span> + boolValue);
+        System.out.println(<span style="color:#CE9178;">"字符串: "</span> + stringValue);
+    }
+}</pre>
+                    </div>
+                    <h3>运行结果</h3>
+                    <div class="result-block">字节型: 10
+整型: 1000
+双精度浮点: 3.1415926
+布尔值: true
+字符串: 你好 Java</div>
+                </div>
+            </div>
+            <div id="operators" class="content-section">
+                <div class="card">
+                    <h2>运算符详解</h2>
+                    <span class="tag tag-file">OperatorsDemo.java</span>
+                    <h3>算术运算符</h3>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">int</span> a = 10, b = 3;
+System.out.println(a + b);  <span style="color:#6a9955;">// 13 加法</span>
+System.out.println(a - b);  <span style="color:#6a9955;">// 7  减法</span>
+System.out.println(a * b);  <span style="color:#6a9955;">// 30 乘法</span>
+System.out.println(a / b);  <span style="color:#6a9955;">// 3  除法</span>
+System.out.println(a % b);  <span style="color:#6a9955;">// 1  取模</span></pre>
+                    </div>
+                    <h3>位运算符</h3>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">int</span> m = 0b1010;
+System.out.println(m & 0b1100);  <span style="color:#6a9955;">// 1000 位与</span>
+System.out.println(m | 0b1100);  <span style="color:#6a9955;">// 1110 位或</span>
+System.out.println(m << 1);      <span style="color:#6a9955;">// 10100 左移</span></pre>
+                    </div>
+                </div>
+            </div>
+            <div id="control" class="content-section">
+                <div class="card">
+                    <h2>控制流程</h2>
+                    <span class="tag tag-file">ControlFlow.java</span>
+                    <h3>条件语句</h3>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">int</span> score = 85;
+<span style="color:#C9A962;">if</span> (score >= 90) {
+    System.out.println(<span style="color:#CE9178;">"优秀"</span>);
+} <span style="color:#C9A962;">else if</span> (score >= 80) {
+    System.out.println(<span style="color:#CE9178;">"良好"</span>);
+} <span style="color:#C9A962;">else</span> {
+    System.out.println(<span style="color:#CE9178;">"及格"</span>);
+}</pre>
+                    </div>
+                    <h3>循环语句</h3>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// for循环</span>
+<span style="color:#C9A962;">for</span> (<span style="color:#C9A962;">int</span> i = 0; i < 5; i++) { System.out.println(i); }
+
+<span style="color:#6a9955;">// while循环</span>
+<span style="color:#C9A962;">int</span> count = 0;
+<span style="color:#C9A962;">while</span> (count < 3) { count++; }
+
+<span style="color:#6a9955;">// switch</span>
+<span style="color:#C9A962;">switch</span> (day) {
+    <span style="color:#C9A962;">case</span> <span style="color:#CE9178;">"Monday"</span>: System.out.println(<span style="color:#CE9178;">"星期一"</span>); <span style="color:#C9A962;">break</span>;
+    <span style="color:#C9A962;">default</span>: System.out.println(<span style="color:#CE9178;">"其他"</span>);
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="string" class="content-section">
+                <div class="card">
+                    <h2>字符串操作</h2>
+                    <span class="tag tag-file">StringOperations.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">String</span> str = <span style="color:#CE9178;">"Hello World"</span>;
+<span style="color:#C9A962;">int</span> len = str.length();                 <span style="color:#6a9955;">// 11</span>
+<span style="color:#C9A962;">boolean</span> has = str.contains(<span style="color:#CE9178;">"World"</span>);   <span style="color:#6a9955;">// true</span>
+<span style="color:#C9A962;">String</span> up = str.toUpperCase();         <span style="color:#6a9955;">// "HELLO WORLD"</span>
+<span style="color:#C9A962;">String</span>[] arr = str.split(<span style="color:#CE9178;">" "</span>);        <span style="color:#6a9955;">// ["Hello", "World"]</span>
+
+<span style="color:#C9A962;">StringBuilder</span> sb = <span style="color:#C9A962;">new</span> StringBuilder();
+sb.append(<span style="color:#CE9178;">"Hello"</span>).append(<span style="color:#CE9178;">" "</span>).append(<span style="color:#CE9178;">"Java"</span>);
+System.out.println(sb.toString());</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="typeconversion" class="content-section">
+                <div class="card">
+                    <h2>类型转换</h2>
+                    <span class="tag tag-file">TypeConversion.java</span>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// 自动转换（小→大）</span>
+<span style="color:#C9A962;">byte</span> b = 10;
+<span style="color:#C9A962;">int</span> i = b;        <span style="color:#6a9955;">// byte → int</span>
+<span style="color:#C9A962;">double</span> d = i;     <span style="color:#6a9955;">// int → double</span>
+
+<span style="color:#6a9955;">// 强制转换（大→小）</span>
+<span style="color:#C9A962;">double</span> pi = 3.14159;
+<span style="color:#C9A962;">int</span> piInt = (<span style="color:#C9A962;">int</span>) pi;  <span style="color:#6a9955;">// 3</span>
+
+<span style="color:#6a9955;">// 字符串转换</span>
+<span style="color:#C9A962;">int</span> num = Integer.parseInt(<span style="color:#CE9178;">"123"</span>);
+<span style="color:#C9A962;">String</span> s = String.valueOf(456);</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="person" class="content-section">
+                <div class="card">
+                    <h2>类与封装</h2>
+                    <span class="tag tag-file">Person.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">public class</span> Person <span style="color:#C9A962;">implements</span> Cloneable, Serializable {
+    <span style="color:#C9A962;">private</span> String name;  <span style="color:#6a9955;">// 私有属性（封装）</span>
+    <span style="color:#C9A962;">private</span> <span style="color:#C9A962;">int</span> age;
+    
+    <span style="color:#C9A962;">public</span> Person(String name, <span style="color:#C9A962;">int</span> age) {
+        <span style="color:#C9A962;">this</span>.name = name;
+        <span style="color:#C9A962;">this</span>.age = age;
+    }
+    
+    <span style="color:#6a9955;">// Getter和Setter</span>
+    <span style="color:#C9A962;">public</span> String getName() { <span style="color:#C9A962;">return</span> name; }
+    <span style="color:#C9A962;">public void</span> setName(String name) { <span style="color:#C9A962;">this</span>.name = name; }
+    
+    <span style="color:#6a9955;">// 浅拷贝</span>
+    @Override
+    <span style="color:#C9A962;">protected</span> Object clone() <span style="color:#C9A962;">throws</span> CloneNotSupportedException {
+        <span style="color:#C9A962;">return super</span>.clone();
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="student" class="content-section">
+                <div class="card">
+                    <h2>继承与多态</h2>
+                    <span class="tag tag-file">Student.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">public class</span> Student <span style="color:#C9A962;">extends</span> Person {
+    <span style="color:#C9A962;">private</span> String school;
+    
+    <span style="color:#C9A962;">public</span> Student(String name, <span style="color:#C9A962;">int</span> age, String school) {
+        <span style="color:#C9A962;">super</span>(name, age);  <span style="color:#6a9955;">// 调用父类构造方法</span>
+        <span style="color:#C9A962;">this</span>.school = school;
+    }
+    
+    @Override
+    <span style="color:#C9A962;">public void</span> introduce() {  <span style="color:#6a9955;">// 方法重写</span>
+        System.out.println(<span style="color:#CE9178;">"我叫"</span> + getName() + <span style="color:#CE9178;">"，在"</span> + school + <span style="color:#CE9178;">"上学"</span>);
+    }
+}
+
+<span style="color:#6a9955;">// 多态</span>
+Person p = <span style="color:#C9A962;">new</span> Student(<span style="color:#CE9178;">"李四"</span>, 18, <span style="color:#CE9178;">"清华大学"</span>);
+p.introduce();  <span style="color:#6a9955;">// 调用子类的方法</span></pre>
+                    </div>
+                </div>
+            </div>
+            <div id="innerclass" class="content-section">
+                <div class="card">
+                    <h2>内部类</h2>
+                    <span class="tag tag-file">InnerClassesDemo.java</span>
+                    <h3>4种内部类</h3>
+                    <div class="table-container">
+                        <table>
+                            <tr><th>类型</th><th>特点</th></tr>
+                            <tr><td>成员内部类</td><td>定义在类内部，可访问外部类所有成员</td></tr>
+                            <tr><td>静态内部类</td><td>用static修饰，不依赖外部类实例</td></tr>
+                            <tr><td>局部内部类</td><td>定义在方法内部</td></tr>
+                            <tr><td>匿名内部类</td><td>没有类名，一次性使用</td></tr>
+                        </table>
+                    </div>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// 匿名类示例</span>
+Runnable r = <span style="color:#C9A962;">new</span> Runnable() {
+    @Override
+    <span style="color:#C9A962;">public void</span> run() { System.out.println(<span style="color:#CE9178;">"匿名类实现"</span>); }
+};</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="interface" class="content-section">
+                <div class="card">
+                    <h2>接口与抽象类</h2>
+                    <span class="tag tag-file">InterfaceDetailsDemo.java</span>
+                    <div class="table-container">
+                        <table>
+                            <tr><th>特性</th><th>抽象类</th><th>接口</th></tr>
+                            <tr><td>构造方法</td><td>可以有</td><td>不能有</td></tr>
+                            <tr><td>成员变量</td><td>任意类型</td><td>只能是常量</td></tr>
+                            <tr><td>多继承</td><td>不行</td><td>可以多实现</td></tr>
+                        </table>
+                    </div>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">abstract class</span> Animal {
+    <span style="color:#C9A962;">public abstract void</span> makeSound();
+}
+
+<span style="color:#C9A962;">interface</span> Flyable {
+    <span style="color:#C9A962;">void</span> fly();
+    <span style="color:#C9A962;">default void</span> land() { }
+}
+
+<span style="color:#C9A962;">class</span> Duck <span style="color:#C9A962;">extends</span> Animal <span style="color:#C9A962;">implements</span> Flyable {
+    <span style="color:#C9A962;">public void</span> makeSound() { System.out.println(<span style="color:#CE9178;">"嘎嘎嘎"</span>); }
+    <span style="color:#C9A962;">public void</span> fly() { System.out.println(<span style="color:#CE9178;">"鸭子在飞"</span>); }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="arrays" class="content-section">
+                <div class="card">
+                    <h2>数组操作</h2>
+                    <span class="tag tag-file">ArraysDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">int</span>[] arr1 = <span style="color:#C9A962;">new int</span>[5];
+<span style="color:#C9A962;">int</span>[] arr2 = {1, 2, 3, 4, 5};
+
+<span style="color:#6a9955;">// 遍历</span>
+<span style="color:#C9A962;">for</span> (<span style="color:#C9A962;">int</span> num : arr2) { System.out.println(num); }
+
+Arrays.sort(arr2);  <span style="color:#6a9955;">// 排序</span>
+<span style="color:#C9A962;">int</span>[] copy = Arrays.copyOf(arr2, arr2.length);  <span style="color:#6a9955;">// 复制</span></pre>
+                    </div>
+                </div>
+            </div>
+            <div id="collection" class="content-section">
+                <div class="card">
+                    <h2>集合框架</h2>
+                    <span class="tag tag-file">CollectionDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// List - 有序可重复</span>
+List<String> list = <span style="color:#C9A962;">new</span> ArrayList<>();
+list.add(<span style="color:#CE9178;">"Apple"</span>);
+
+<span style="color:#6a9955;">// Set - 无序不可重复</span>
+Set<String> set = <span style="color:#C9A962;">new</span> HashSet<>();
+set.add(<span style="color:#CE9178;">"Apple"</span>);
+
+<span style="color:#6a9955;">// Map - 键值对</span>
+Map<String, Integer> map = <span style="color:#C9A962;">new</span> HashMap<>();
+map.put(<span style="color:#CE9178;">"Apple"</span>, 10);</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="queuestack" class="content-section">
+                <div class="card">
+                    <h2>队列与栈</h2>
+                    <span class="tag tag-file">QueueStackDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// Queue - 先进先出</span>
+Queue<String> queue = <span style="color:#C9A962;">new</span> LinkedList<>();
+queue.offer(<span style="color:#CE9178;">"A"</span>);
+String front = queue.poll();
+
+<span style="color:#6a9955;">// Stack - 后进先出</span>
+Stack<Integer> stack = <span style="color:#C9A962;">new</span> Stack<>();
+stack.push(1);
+<span style="color:#C9A962;">int</span> top = stack.pop();
+
+<span style="color:#6a9955;">// PriorityQueue - 优先队列</span>
+PriorityQueue<Integer> pq = <span style="color:#C9A962;">new</span> PriorityQueue<>();
+pq.offer(5); pq.offer(2);
+<span style="color:#C9A962;">int</span> smallest = pq.poll();  <span style="color:#6a9955;">// 2</span></pre>
+                    </div>
+                </div>
+            </div>
+            <div id="map" class="content-section">
+                <div class="card">
+                    <h2>Map详解</h2>
+                    <span class="tag tag-file">MapDetailsDemo.java</span>
+                    <div class="table-container">
+                        <table>
+                            <tr><th>类型</th><th>特点</th></tr>
+                            <tr><td>HashMap</td><td>无序，性能高</td></tr>
+                            <tr><td>LinkedHashMap</td><td>保持插入顺序</td></tr>
+                            <tr><td>TreeMap</td><td>按键排序</td></tr>
+                        </table>
+                    </div>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">for</span> (Map.Entry<String, String> entry : map.entrySet()) {
+    System.out.println(entry.getKey() + <span style="color:#CE9178;">": "</span> + entry.getValue());
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="exception" class="content-section">
+                <div class="card">
+                    <h2>异常处理</h2>
+                    <span class="tag tag-file">ExceptionDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">try</span> {
+    <span style="color:#C9A962;">int</span> result = 10 / 0;
+} <span style="color:#C9A962;">catch</span> (ArithmeticException e) {
+    System.out.println(<span style="color:#CE9178;">"捕获到异常: "</span> + e.getMessage());
+} <span style="color:#C9A962;">finally</span> {
+    System.out.println(<span style="color:#CE9178;">"finally块执行"</span>);
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="exception2" class="content-section">
+                <div class="card">
+                    <h2>自定义异常</h2>
+                    <span class="tag tag-file">ExceptionDetailsDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">class</span> InvalidAgeException <span style="color:#C9A962;">extends</span> Exception { }
+<span style="color:#C9A962;">class</span> NegativeNumberException <span style="color:#C9A962;">extends</span> RuntimeException { }
+
+<span style="color:#6a9955;">// try-with-resources</span>
+<span style="color:#C9A962;">try</span> (BufferedReader reader = <span style="color:#C9A962;">new</span> BufferedReader(
+        <span style="color:#C9A962;">new</span> FileReader(<span style="color:#CE9178;">"test.txt"</span>))) {
+    <span style="color:#C9A962;">String</span> line = reader.readLine();
+} <span style="color:#6a9955;">// 自动关闭</span></pre>
+                    </div>
+                </div>
+            </div>
+            <div id="file" class="content-section">
+                <div class="card">
+                    <h2>文件读写</h2>
+                    <span class="tag tag-file">FileDemo.java</span>
+                    <div class="code-block">
+<pre>File file = <span style="color:#C9A962;">new</span> File(<span style="color:#CE9178;">"test.txt"</span>);
+<span style="color:#C9A962;">if</span> (!file.exists()) { file.createNewFile(); }
+
+<span style="color:#C9A962;">try</span> (FileWriter writer = <span style="color:#C9A962;">new</span> FileWriter(<span style="color:#CE9178;">"test.txt"</span>)) {
+    writer.write(<span style="color:#CE9178;">"Hello World!"</span>);
+}
+
+<span style="color:#C9A962;">try</span> (FileReader reader = <span style="color:#C9A962;">new</span> FileReader(<span style="color:#CE9178;">"test.txt"</span>)) {
+    <span style="color:#C9A962;">char</span>[] buffer = <span style="color:#C9A962;">new char</span>[1024];
+    <span style="color:#C9A962;">int</span> length = reader.read(buffer);
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="nio" class="content-section">
+                <div class="card">
+                    <h2>NIO与序列化</h2>
+                    <span class="tag tag-file">NioSerializationDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// NIO</span>
+Path path = Paths.get(<span style="color:#CE9178;">"test_nio.txt"</span>);
+Files.write(path, <span style="color:#CE9178;">"Hello NIO"</span>.getBytes());
+<span style="color:#C9A962;">byte</span>[] bytes = Files.readAllBytes(path);
+
+<span style="color:#6a9955;">// 序列化</span>
+<span style="color:#C9A962;">try</span> (ObjectOutputStream oos = <span style="color:#C9A962;">new</span> ObjectOutputStream(
+        <span style="color:#C9A962;">new</span> FileOutputStream(<span style="color:#CE9178;">"obj.dat"</span>))) {
+    oos.writeObject(person);
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="generics" class="content-section">
+                <div class="card">
+                    <h2>泛型</h2>
+                    <span class="tag tag-file">GenericsDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// 泛型类</span>
+<span style="color:#C9A962;">class</span> Box<T> {
+    <span style="color:#C9A962;">private</span> T content;
+    <span style="color:#C9A962;">public</span> T get() { <span style="color:#C9A962;">return</span> content; }
+}
+
+<span style="color:#6a9955;">// 泛型方法</span>
+<span style="color:#C9A962;">public static</span> <T> <span style="color:#C9A962;">void</span> print(T item) { }
+
+<span style="color:#6a9955;">// 有界泛型</span>
+<span style="color:#C9A962;">public static</span> <T <span style="color:#C9A962;">extends</span> Number> <span style="color:#C9A962;">double</span> sum(List<T> nums) { }
+
+Box<String> box = <span style="color:#C9A962;">new</span> Box<>();</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="lambda" class="content-section">
+                <div class="card">
+                    <h2>Lambda表达式</h2>
+                    <span class="tag tag-file">LambdaDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// 基础语法</span>
+Runnable r = () -> System.out.println(<span style="color:#CE9178;">"Hello"</span>);
+
+<span style="color:#6a9955;">// 带参数</span>
+Comparator<Integer> cmp = (a, b) -> a - b;
+
+<span style="color:#6a9955;">// 方法引用</span>
+list.forEach(System.out::println);
+
+<span style="color:#6a9955;">// 构造方法引用</span>
+Supplier<List<String>> s = ArrayList::new;</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="stream" class="content-section">
+                <div class="card">
+                    <h2>Stream API</h2>
+                    <span class="tag tag-file">StreamDemo.java</span>
+                    <div class="code-block">
+<pre>List<String> result = list.stream()
+    .filter(s -> s.startsWith(<span style="color:#CE9178;">"a"</span>))       <span style="color:#6a9955;">// 过滤</span>
+    .map(String::toUpperCase)              <span style="color:#6a9955;">// 映射</span>
+    .collect(Collectors.toList());        <span style="color:#6a9955;">// 收集</span>
+
+<span style="color:#C9A962;">int</span> sum = numbers.stream().mapToInt(Integer::intValue).sum();
+<span style="color:#C9A962;">boolean</span> any = list.stream().anyMatch(s -> s.contains(<span style="color:#CE9178;">"test"</span>));</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="enum" class="content-section">
+                <div class="card">
+                    <h2>枚举</h2>
+                    <span class="tag tag-file">EnumDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">enum</span> Weekday {
+    MONDAY(<span style="color:#CE9178;">"星期一"</span>), TUESDAY(<span style="color:#CE9178;">"星期二"</span>);
+    
+    <span style="color:#C9A962;">private</span> String chineseName;
+    <span style="color:#C9A962;">private</span> Weekday(String name) { <span style="color:#C9A962;">this</span>.chineseName = name; }
+    <span style="color:#C9A962;">public</span> String getName() { <span style="color:#C9A962;">return</span> chineseName; }
+}
+
+Weekday today = Weekday.MONDAY;
+<span style="color:#C9A962;">for</span> (Weekday day : Weekday.values()) {
+    System.out.println(day.getName());
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="singleton" class="content-section">
+                <div class="card">
+                    <h2>单例模式</h2>
+                    <span class="tag tag-file">SingletonDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// 饿汉式</span>
+<span style="color:#C9A962;">class</span> EagerSingleton {
+    <span style="color:#C9A962;">private static final</span> EagerSingleton INSTANCE = <span style="color:#C9A962;">new</span> EagerSingleton();
+    <span style="color:#C9A962;">private</span> EagerSingleton() {}
+    <span style="color:#C9A962;">public static</span> EagerSingleton getInstance() { <span style="color:#C9A962;">return</span> INSTANCE; }
+}
+
+<span style="color:#6a9955;">// 懒汉式（双重检查）</span>
+<span style="color:#C9A962;">class</span> LazySingleton {
+    <span style="color:#C9A962;">private static volatile</span> LazySingleton instance;
+    <span style="color:#C9A962;">public static</span> LazySingleton getInstance() {
+        <span style="color:#C9A962;">if</span> (instance == <span style="color:#C9A962;">null</span>) {
+            <span style="color:#C9A962;">synchronized</span>(LazySingleton.<span style="color:#C9A962;">class</span>) {
+                <span style="color:#C9A962;">if</span> (instance == <span style="color:#C9A962;">null</span>) { instance = <span style="color:#C9A962;">new</span> LazySingleton(); }
+            }
+        }
+        <span style="color:#C9A962;">return</span> instance;
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="factory" class="content-section">
+                <div class="card">
+                    <h2>工厂模式</h2>
+                    <span class="tag tag-file">FactoryPatternDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">interface</span> Product { <span style="color:#C9A962;">void</span> use(); }
+<span style="color:#C9A962;">class</span> ProductA <span style="color:#C9A962;">implements</span> Product {
+    <span style="color:#C9A962;">public void</span> use() { System.out.println(<span style="color:#CE9178;">"使用产品A"</span>); }
+}
+<span style="color:#C9A962;">class</span> ProductFactory {
+    <span style="color:#C9A962;">public static</span> Product create(String type) {
+        <span style="color:#C9A962;">switch</span> (type) {
+            <span style="color:#C9A962;">case</span> <span style="color:#CE9178;">"A"</span>: <span style="color:#C9A962;">return new</span> ProductA();
+            <span style="color:#C9A962;">default</span>: <span style="color:#C9A962;">throw new</span> IllegalArgumentException();
+        }
+    }
+}
+Product p = ProductFactory.create(<span style="color:#CE9178;">"A"</span>);
+p.use();</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="thread" class="content-section">
+                <div class="card">
+                    <h2>多线程基础</h2>
+                    <span class="tag tag-file">ThreadDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#6a9955;">// 继承Thread</span>
+<span style="color:#C9A962;">class</span> MyThread <span style="color:#C9A962;">extends</span> Thread {
+    @Override
+    <span style="color:#C9A962;">public void</span> run() { System.out.println(<span style="color:#CE9178;">"线程运行中"</span>); }
+}
+<span style="color:#6a9955;">// 实现Runnable</span>
+<span style="color:#C9A962;">class</span> MyRunnable <span style="color:#C9A962;">implements</span> Runnable {
+    @Override
+    <span style="color:#C9A962;">public void</span> run() { System.out.println(<span style="color:#CE9178;">"Runnable运行中"</span>); }
+}
+<span style="color:#C9A962;">new</span> MyThread().start();
+<span style="color:#C9A962;">new</span> Thread(<span style="color:#C9A962;">new</span> MyRunnable()).start();</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="threadpool" class="content-section">
+                <div class="card">
+                    <h2>线程池</h2>
+                    <span class="tag tag-file">ThreadPoolDemo.java</span>
+                    <div class="code-block">
+<pre>ExecutorService executor = Executors.newFixedThreadPool(3);
+executor.submit(() -> { System.out.println(<span style="color:#CE9178;">"任务1"</span>); });
+executor.submit(() -> { System.out.println(<span style="color:#CE9178;">"任务2"</span>); });
+executor.shutdown();
+
+<span style="color:#6a9955;">// 定时任务</span>
+ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+scheduler.schedule(() -> System.out.println(<span style="color:#CE9178;">"延迟执行"</span>), 5, TimeUnit.SECONDS);</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="sync" class="content-section">
+                <div class="card">
+                    <h2>同步机制</h2>
+                    <span class="tag tag-file">SynchronizationDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">class</span> Counter {
+    <span style="color:#C9A962;">private int</span> count = 0;
+    
+    <span style="color:#6a9955;">// synchronized方法</span>
+    <span style="color:#C9A962;">public synchronized void</span> increment() { count++; }
+    
+    <span style="color:#6a9955;">// synchronized块</span>
+    <span style="color:#C9A962;">public void</span> decrement() {
+        <span style="color:#C9A962;">synchronized</span>(<span style="color:#C9A962;">this</span>) { count--; }
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="callable" class="content-section">
+                <div class="card">
+                    <h2>Callable与Future</h2>
+                    <span class="tag tag-file">CallableFutureDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">class</span> SumTask <span style="color:#C9A962;">implements</span> Callable<Integer> {
+    <span style="color:#C9A962;">private int</span> start, end;
+    <span style="color:#C9A962;">public</span> SumTask(<span style="color:#C9A962;">int</span> start, <span style="color:#C9A962;">int</span> end) { <span style="color:#C9A962;">this</span>.start = start; <span style="color:#C9A962;">this</span>.end = end; }
+    @Override
+    <span style="color:#C9A962;">public</span> Integer call() <span style="color:#C9A962;">throws</span> Exception {
+        <span style="color:#C9A962;">int</span> sum = 0;
+        <span style="color:#C9A962;">for</span> (<span style="color:#C9A962;">int</span> i = start; i <= end; i++) { sum += i; }
+        <span style="color:#C9A962;">return</span> sum;
+    }
+}
+ExecutorService executor = Executors.newSingleThreadExecutor();
+Future<Integer> future = executor.submit(<span style="color:#C9A962;">new</span> SumTask(1, 100));
+<span style="color:#C9A962;">int</span> result = future.get();  <span style="color:#6a9955;">// 5050</span></pre>
+                    </div>
+                </div>
+            </div>
+            <div id="jvmmemory" class="content-section">
+                <div class="card">
+                    <h2>JVM内存模型</h2>
+                    <span class="tag tag-file">JVMMemoryDemo.java</span>
+                    <div class="code-block">
+<pre>┌─────────────────────────────────────────────────┐
+│  方法区（Method Area）  - 类信息、常量、静态变量   │
+├─────────────────────────────────────────────────┤
+│  堆（Heap）         - 对象实例、数组（GC主要区域）│
+├─────────────────────────────────────────────────┤
+│  栈（Stack）        - 方法调用、局部变量（线程独有）│
+├─────────────────────────────────────────────────┤
+│  程序计数器（PC）    - 当前执行位置（线程独有）    │
+├─────────────────────────────────────────────────┤
+│  本地方法栈         - native方法调用             │
+└─────────────────────────────────────────────────┘</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="gc" class="content-section">
+                <div class="card">
+                    <h2>垃圾回收</h2>
+                    <span class="tag tag-file">GarbageCollectionDemo.java</span>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">class</span> MyObject {
+    @Override
+    <span style="color:#C9A962;">protected void</span> finalize() <span style="color:#C9A962;">throws</span> Throwable {
+        System.out.println(<span style="color:#CE9178;">"对象被回收"</span>);
+    }
+}
+<span style="color:#C9A962;">public static void</span> main(String[] args) {
+    MyObject obj = <span style="color:#C9A962;">new</span> MyObject();
+    obj = <span style="color:#C9A962;">null</span>;  <span style="color:#6a9955;">// 成为垃圾</span>
+    System.gc();  <span style="color:#6a9955;">// 建议回收</span>
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="socket" class="content-section">
+                <div class="card">
+                    <h2>Socket编程</h2>
+                    <span class="tag tag-file">SocketServer.java / SocketClient.java</span>
+                    <h3>服务器端</h3>
+                    <div class="code-block">
+<pre>ServerSocket server = <span style="color:#C9A962;">new</span> ServerSocket(8888);
+Socket client = server.accept();
+BufferedReader reader = <span style="color:#C9A962;">new</span> BufferedReader(
+    <span style="color:#C9A962;">new</span> InputStreamReader(client.getInputStream()));
+PrintWriter writer = <span style="color:#C9A962;">new</span> PrintWriter(client.getOutputStream(), <span style="color:#C9A962;">true</span>);
+<span style="color:#C9A962;">String</span> msg = reader.readLine();
+writer.println(<span style="color:#CE9178;">"收到: "</span> + msg);</pre>
+                    </div>
+                    <h3>客户端</h3>
+                    <div class="code-block">
+<pre>Socket socket = <span style="color:#C9A962;">new</span> Socket(<span style="color:#CE9178;">"localhost"</span>, 8888);
+PrintWriter writer = <span style="color:#C9A962;">new</span> PrintWriter(socket.getOutputStream(), <span style="color:#C9A962;">true</span>);
+writer.println(<span style="color:#CE9178;">"Hello Server!"</span>);</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="structure" class="content-section">
+                <div class="card">
+                    <h2>Java 程序结构</h2>
+                    <div class="code-block">
+<pre><span style="color:#C9A962;">package</span> basic_syntax;           <span style="color:#6a9955;">// 包声明</span>
+<span style="color:#C9A962;">import</span> java.util.Scanner;       <span style="color:#6a9955;">// 导入语句</span>
+<span style="color:#C9A962;">public class</span> Variables {         <span style="color:#6a9955;">// 类声明</span>
+    <span style="color:#C9A962;">public static void</span> main(String[] args) {  <span style="color:#6a9955;">// 主方法</span>
+        <span style="color:#6a9955;">// 程序代码</span>
+    }
+}</pre>
+                    </div>
+                    <h3>main 方法参数说明</h3>
+                    <div class="table-container">
+                        <table>
+                            <tr><th>参数</th><th>说明</th></tr>
+                            <tr><td>public</td><td>公共访问修饰符，JVM可以访问</td></tr>
+                            <tr><td>static</td><td>静态方法，不需要创建对象即可调用</td></tr>
+                            <tr><td>void</td><td>返回类型为空</td></tr>
+                            <tr><td>main</td><td>方法名，固定为main</td></tr>
+                            <tr><td>String[] args</td><td>命令行参数数组</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showSection(id, element) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (element) element.classList.add('active');
+            event.preventDefault();
+        }
+    </script>
+</body>
+</html>

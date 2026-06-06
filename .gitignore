@@ -1,0 +1,117 @@
+# Compiled class files
+*.class
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+*.txt.log
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+
+# Build directories
+build/
+out/
+target/
+bin/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Maven/Gradle
+.mvn/
+gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradle/
+!gradlew
+!gradlew.bat
+
+# Eclipse
+*.launch
+*.swp
+*.lock
+
+# NetBeans
+nbproject/private/
+build/
+dist/
+
+# IntelliJ IDEA
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test reports
+surefire-reports/
+failsafe-reports/
+
+# Coverage reports
+coverage/
+jacoco*.exec
+
+# Local configuration
+local.properties
+.env
+.env.local
+.env.*.local
+
+# Android specific
+*.apk
+*.ap_
+*.aab
+*.dex
+*.so
+*.pro
+*.mapping.txt
+lint-results.xml
+lint-results.html
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Project specific exclusions
+.claude/
+practice/
+basic/Android/
+basic/output.txt
+basic/android_development.md
+basic/wifi_technology.md
+basic/*.py
