@@ -86,7 +86,18 @@ HTTP版本 状态码 状态描述
 
 ### HTTP请求
 
-运行 `HttpClientDemo.java` 发送HTTP GET/POST请求
+运行 `HttpClientDemo.java` 发送HTTP GET请求
+
+**版本要求**：HttpClient 是 **Java 11+** 的 API
+
+**实际代码使用 GitHub API：**
+```java
+// 实际请求的URL
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.github.com/users/octocat"))
+    .GET()
+    .build();
+```
 
 ## 注意事项
 
@@ -95,9 +106,10 @@ HTTP版本 状态码 状态描述
 3. 服务器应处理多个客户端连接（可使用线程池）
 4. 注意设置合理的超时时间
 5. 大数据量传输时应考虑使用缓冲流
+6. **HttpClient 需要 Java 11+**，根 README 声称 JDK 8 即可运行，存在版本不一致
 
 ## 扩展学习
 
 - **NIO**: 使用`java.nio.channels.SocketChannel`实现非阻塞IO
-- **URLConnection**: Java内置的HTTP客户端
+- **URLConnection**: Java内置的HTTP客户端（Java 11 之前）
 - **第三方库**: Apache HttpClient、OkHttp、Retrofit

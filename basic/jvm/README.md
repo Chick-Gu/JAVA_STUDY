@@ -65,7 +65,24 @@
 
 ## 垃圾回收 (GC)
 
-### GC算法
+### 实际代码演示（GarbageCollectionDemo.java）
+
+```java
+// 请求垃圾回收
+System.gc();
+
+// finalize() 方法（已废弃，Java 9+）
+@Override
+protected void finalize() throws Throwable {
+    System.out.println("对象被回收");
+}
+```
+
+**注意事项**：
+- `finalize()` 方法在 Java 9+ 已标记为废弃，不推荐在生产代码中使用
+- 实际代码只演示了 `System.gc()` 和 `finalize()`，GC 算法等内容是扩展知识
+
+### GC算法（扩展知识）
 
 | 算法 | 原理 | 优点 | 缺点 |
 |------|------|------|------|
@@ -73,7 +90,7 @@
 | 复制 | 将存活对象复制到另一区域 | 无碎片 | 浪费一半空间 |
 | 标记-整理 | 标记后整理内存 | 无碎片 | 整理耗时 |
 
-### 分代收集
+### 分代收集（扩展知识）
 
 ```
 年轻代 (Young Generation)
@@ -86,7 +103,7 @@
 - **Minor GC**: 回收年轻代，频率高
 - **Major/Full GC**: 回收老年代，频率低但耗时
 
-### 常见GC收集器
+### 常见GC收集器（扩展知识）
 
 - **Serial**: 单线程，最简单
 - **Parallel (PS)**: 多线程，吞吐量优先
@@ -119,7 +136,7 @@ Application ClassLoader (应用类加载器)
    - 解析: 符号引用转为直接引用
 3. **初始化 (Initialization)**: 执行静态初始化代码
 
-## JVM参数示例
+## JVM参数示例（扩展知识）
 
 ```bash
 # 堆大小设置
@@ -137,6 +154,8 @@ Application ClassLoader (应用类加载器)
 # OOM时生成堆转储
 -XX:+HeapDumpOnOutOfMemoryError
 ```
+
+**注意**：以上 JVM 参数在实际代码中未使用，属于扩展知识
 
 ## 常见问题排查
 

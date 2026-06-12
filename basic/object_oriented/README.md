@@ -18,18 +18,59 @@
 
 将数据和操作封装在类中，通过访问修饰符控制访问权限。
 
+**实际代码（Person.java）：**
 ```java
-public class Person {
-    private String name;  // 私有属性，外部无法直接访问
+public class Person implements Cloneable, Serializable {
+    private static final long serialVersionUID = 1L;
+
+    // 私有属性（封装）
+    private String name;
     private int age;
-    
-    // 提供公开的getter和setter方法
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
+
+    // 无参构造函数
+    public Person() {}
+
+    // 带参数构造方法
+    public Person(String name, int age) {
         this.name = name;
+        this.age = age;
+    }
+
+    // 复制构造函数（浅拷贝）
+    public Person(Person other) {
+        this.name = other.name;
+        this.age = other.age;
+    }
+
+    // Getter 方法
+    public String getName() { return name; }
+    public int getAge() { return age; }
+
+    // Setter 方法（带验证）
+    public void setName(String name) { this.name = name; }
+    public void setAge(int age) {
+        if (age > 0) {  // 验证年龄必须大于0
+            this.age = age;
+        }
+    }
+
+    // 自我介绍方法
+    public void introduce() {
+        System.out.println("我叫" + name + "，今年" + age + "岁");
+    }
+
+    // 浅拷贝（使用 clone 方法）
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    // 深拷贝（手动实现）
+    public Person deepCopy() {
+        Person copy = new Person();
+        copy.name = this.name;  // String 是不可变对象，直接赋值即可
+        copy.age = this.age;
+        return copy;
     }
 }
 ```
@@ -40,17 +81,63 @@ public class Person {
 - `protected`: 同包 + 子类可见
 - `public`: 全局可见
 
+**注意事项**:
+- Person 类实现了 `Cloneable` 和 `Serializable` 接口
+- `setAge()` 方法有验证逻辑，年龄必须大于0
+- 提供了两种拷贝方式：`clone()`（浅拷贝）和 `deepCopy()`（深拷贝）
+
 ### 2. 继承 (Inheritance)
 
 子类继承父类的属性和方法，实现代码复用。
 
+**实际代码（Student.java）：**
 ```java
-public class Student extends Person {
+public class Student extends Person implements Cloneable, Serializable {
+    private static final long serialVersionUID = 1L;
+
+    // 子类特有属性
     private String school;
-    
+
+    // 无参构造函数
+    public Student() {}
+
+    // 带参数构造方法
     public Student(String name, int age, String school) {
         super(name, age);  // 调用父类构造方法
         this.school = school;
+    }
+
+    // 复制构造函数
+    public Student(Student other) {
+        super(other);           // 调用父类的复制构造函数
+        this.school = other.school;
+    }
+
+    // Getter 和 Setter
+    public String getSchool() { return school; }
+    public void setSchool(String school) { this.school = school; }
+
+    // 重写自我介绍方法（多态）
+    @Override
+    public void introduce() {
+        System.out.println("我叫" + getName() + "，今年" + getAge() + "岁，在" + school + "上学");
+    }
+
+    // 浅拷贝（子类需要重写以复制子类特有字段）
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Student cloned = (Student) super.clone();
+        // 如果有引用类型字段，需要在这里处理
+        return cloned;
+    }
+
+    // 深拷贝（手动实现）
+    public Student deepCopy() {
+        Student copy = new Student();
+        copy.setName(this.getName());
+        copy.setAge(this.getAge());
+        copy.school = this.school;
+        return copy;
     }
 }
 ```
@@ -59,6 +146,8 @@ public class Student extends Person {
 - Java只支持单继承，一个类只能有一个父类
 - 子类可以重写(Override)父类的方法
 - 使用`super`关键字调用父类成员
+- Student 重写了 `introduce()` 方法，实现多态
+- Student 重写了 `clone()` 方法，确保子类特有字段也被复制
 
 ### 3. 多态 (Polymorphism)
 
@@ -114,13 +203,25 @@ Java支持在类内部定义类，称为内部类。
 
 ## 浅拷贝与深拷贝
 
+**浅拷贝**：只复制对象本身，引用类型字段共享
 ```java
-// 浅拷贝：只拷贝引用
-Person shallow = person;
+// 方式1：使用 clone() 方法
+Person shallowClone = (Person) person.clone();
 
-// 深拷贝：拷贝整个对象
-Person deep = (Person) person.clone();
+// 方式2：使用复制构造函数
+Person copyConstructor = new Person(person);
 ```
+
+**深拷贝**：递归复制所有字段，包括引用类型
+```java
+Person deepClone = person.deepCopy();
+```
+
+**注意事项**：
+- `clone()` 是浅拷贝，引用类型字段会共享
+- `deepCopy()` 是深拷贝，所有字段都是独立的
+- String 是不可变对象，浅拷贝时可以直接赋值
+- 如果有可变引用类型字段（如数组、集合），需要在深拷贝中手动复制
 
 ## 最佳实践
 

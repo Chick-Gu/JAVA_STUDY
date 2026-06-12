@@ -70,27 +70,49 @@ public void readFile(String path) throws IOException {
 
 ### 3. 自定义异常
 
+**实际代码（ExceptionDetailsDemo.java）中的 InvalidAgeException：**
+```java
+public class InvalidAgeException extends Exception {
+    private static final long serialVersionUID = 1L;
+
+    public InvalidAgeException(String message) {
+        super(message);
+    }
+
+    // 带 cause 参数的构造函数，用于异常链
+    public InvalidAgeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+```
+
+**自定义异常最佳实践：**
 ```java
 public class BusinessException extends RuntimeException {
     private static final long serialVersionUID = 1L;
-    
+
     private String code;
-    
+
     public BusinessException(String code, String message) {
         super(message);
         this.code = code;
     }
-    
+
+    // 提供带 cause 的构造函数，支持异常链
     public BusinessException(String code, String message, Throwable cause) {
         super(message, cause);
         this.code = code;
     }
-    
+
     public String getCode() {
         return code;
     }
 }
 ```
+
+**注意事项**：
+- 自定义异常应提供带 `Throwable cause` 参数的构造函数，以支持异常链
+- 检查型异常继承 `Exception`，非检查型异常继承 `RuntimeException`
 
 ### 4. 异常链
 

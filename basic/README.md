@@ -14,7 +14,7 @@
 |--------|----------|----------|
 | `basic_syntax/` | Java 基础语法，包括变量、控制流程、运算符等 | 5个 |
 | `object_oriented/` | 面向对象编程核心概念：类、继承、多态、内部类等 | 5个 |
-| `data_structures/` | 数据结构：数组、集合框架、队列、栈、Map等 | 4个 |
+| `data_structures/` | 数据结构：数组、集合、队列、栈、Map、二叉树、图等 | 7个 |
 | `exception_handling/` | 异常处理机制：try-catch、自定义异常、资源自动关闭 | 2个 |
 | `io_operations/` | 文件操作和NIO：文件读写、对象序列化 | 2个 |
 | `advanced_syntax/` | 高级语法：泛型、Lambda、Stream API、枚举 | 4个 |
@@ -42,11 +42,14 @@ basic/
 │   ├── DeepCopyUtil.java               # 深拷贝工具类（序列化方式）
 │   ├── InnerClassesDemo.java           # 内部类（成员、静态、局部、匿名类）
 │   └── InterfaceDetailsDemo.java       # 接口与抽象类详解（多实现、默认方法）
-├── data_structures/                    # 数据结构（4个文件）
+├── data_structures/                    # 数据结构（7个文件）
 │   ├── ArraysDemo.java                 # 数组操作（声明、访问、排序）
+│   ├── ArrayListDemo.java              # ArrayList详解（容量管理、Iterator、二分查找）
 │   ├── CollectionDemo.java             # 集合框架（List、Set、Map基础）
-│   ├── QueueStackDemo.java             # 队列与栈（Queue、Stack、Deque）
-│   └── MapDetailsDemo.java             # Map详解（HashMap、LinkedHashMap、TreeMap）
+│   ├── QueueStackDemo.java             # 队列与栈（Queue、Stack、Deque、PriorityQueue）
+│   ├── MapDetailsDemo.java             # Map详解（HashMap、LinkedHashMap、TreeMap）
+│   ├── BinaryTreeDemo.java             # 二叉树（遍历、BST操作、重建二叉树）
+│   └── GraphDemo.java                  # 图（DFS/BFS、拓扑排序、Dijkstra）
 ├── exception_handling/                 # 异常处理（2个文件）
 │   ├── ExceptionDemo.java              # try-catch-finally基础
 │   └── ExceptionDetailsDemo.java       # 自定义异常与try-with-resources
@@ -713,6 +716,181 @@ for (Map.Entry<String, String> entry : hashMap.entrySet()) {
 // 方式2：使用Lambda
 hashMap.forEach((key, value) -> System.out.println(key + ": " + value));
 ```
+
+### 4.5 ArrayList详解（ArrayListDemo.java）
+
+ArrayList 是 Java 中最常用的动态数组，类似 C++ 的 vector。
+
+**ArrayList vs C++ vector 对比：**
+| C++ vector | Java ArrayList | 说明 |
+|------------|----------------|------|
+| `push_back(x)` | `add(x)` | 末尾添加 |
+| `pop_back()` | `remove(size()-1)` | 末尾删除 |
+| `size()` | `size()` | 获取大小 |
+| `operator[]` | `get(i)` / `set(i, v)` | 随机访问 |
+| `reserve(n)` | `ensureCapacity(n)` | 预分配容量 |
+| `shrink_to_fit()` | `trimToSize()` | 缩容 |
+
+**容量管理：**
+```java
+ArrayList<Integer> list = new ArrayList<>();
+list.ensureCapacity(100);  // 预分配100个元素的容量，避免多次扩容
+list.trimToSize();          // 缩容至实际大小，释放多余内存
+```
+
+**多种遍历方式：**
+```java
+// 方式1：普通for（最快，O(1)随机访问）
+for (int i = 0; i < list.size(); i++) {
+    System.out.println(list.get(i));
+}
+
+// 方式2：增强for
+for (String item : list) {
+    System.out.println(item);
+}
+
+// 方式3：Iterator（可安全删除）
+Iterator<String> it = list.iterator();
+while (it.hasNext()) {
+    String item = it.next();
+    // 可以安全调用 it.remove()
+}
+
+// 方式4：ListIterator（支持双向遍历）
+ListIterator<String> lit = list.listIterator(list.size());
+while (lit.hasPrevious()) {
+    System.out.println(lit.previous());
+}
+
+// 方式5：Lambda
+list.forEach(item -> System.out.println(item));
+```
+
+**排序与二分查找：**
+```java
+ArrayList<Integer> scores = new ArrayList<>(Arrays.asList(85, 92, 76, 88));
+
+Collections.sort(scores);                          // 升序
+Collections.sort(scores, Collections.reverseOrder()); // 降序
+
+// 二分查找（必须先排序）
+int idx = Collections.binarySearch(scores, 88);
+```
+
+**与数组互转：**
+```java
+// ArrayList → 数组
+String[] arr = list.toArray(new String[0]);
+
+// 数组 → ArrayList
+String[] names = {"张三", "李四", "王五"};
+ArrayList<String> fromArray = new ArrayList<>(Arrays.asList(names));
+```
+
+**性能特征：**
+- 底层：`Object[]` 动态数组（连续内存）
+- 随机访问：O(1)
+- 末尾添加：O(1) 均摊
+- 中间插入/删除：O(n)（需移动元素）
+- 扩容策略：默认 ×1.5
+
+**注意事项：**
+- 需要频繁随机访问 → 选 ArrayList
+- 频繁头/中插入删除 → 选 LinkedList
+- `Arrays.asList()` 返回固定大小视图，不能 `add/remove`
+
+### 4.6 二叉树（BinaryTreeDemo.java）
+
+Java 标准库没有直接提供通用二叉树类，需要手动实现。
+
+**树的基本概念：**
+```
+         ①          ← 根节点 (root)
+       /   \
+      ②     ③       ← 内部节点
+     / \   / \
+    ④  ⑤ ⑥  ⑦     ← 叶子节点 (leaf)
+```
+
+**四种遍历方式：**
+```java
+// 前序遍历：根→左→右（用于复制树/序列化）
+// 中序遍历：左→根→右（BST的中序 = 升序排列!）
+// 后序遍历：左→右→根（用于删除树/计算目录大小）
+// 层序遍历：一层一层（用于BFS/最短路径）
+```
+
+**二叉搜索树（BST）操作：**
+```java
+BinarySearchTree bst = new BinarySearchTree();
+bst.insert(5);   // 插入
+bst.insert(3);
+bst.insert(8);
+
+bst.search(4);   // 查找
+bst.findMin();   // 最小值
+bst.findMax();   // 最大值
+bst.delete(3);   // 删除
+```
+
+**BST 特性：**
+- 左子树所有节点 < 根节点
+- 右子树所有节点 > 根节点
+- 中序遍历结果是升序序列
+
+**从遍历序列重建二叉树：**
+```java
+// 已知前序和中序，可以唯一确定一棵二叉树
+int[] preorder = {3, 9, 20, 15, 7};
+int[] inorder  = {9, 3, 15, 20, 7};
+TreeNode root = buildTreeFromPreIn(preorder, inorder);
+```
+
+**注意事项：**
+- Java 标准库的 TreeSet/TreeMap 底层是红黑树，但不暴露节点结构
+- 二叉树相关算法是面试高频考点
+
+### 4.7 图（GraphDemo.java）
+
+Java 标准库没有直接提供通用图类，需要手动实现。
+
+**图的两种表示方式：**
+```java
+// 1. 邻接表（常用，省空间 O(V+E)）
+Map<Integer, List<Integer>> adjList = new HashMap<>();
+adjList.put(0, Arrays.asList(1, 2));  // 节点0连接到1和2
+
+// 2. 邻接矩阵（适合稠密图）
+int[][] matrix = new int[n][n];
+matrix[0][1] = 1;  // 节点0到节点1有边
+```
+
+**图的遍历：**
+```java
+// DFS（深度优先搜索）— 用栈或递归
+// 用途：路径查找、连通分量、拓扑排序、找环
+
+// BFS（广度优先搜索）— 用队列
+// 用途：最短路径（无权图）、社交网络中的"N度人脉"
+```
+
+**拓扑排序（DAG）：**
+```java
+// 有向无环图的拓扑排序
+// 每条边 u→v 中，u 一定排在 v 前面
+// 应用：课程依赖、构建系统（make）、任务调度
+```
+
+**Dijkstra 最短路径：**
+```java
+// 加权图的最短路径算法
+// 适用于边权重非负的图
+```
+
+**注意事项：**
+- 实际项目中通常使用第三方库（如 JGraphT、Guava Graph）
+- 图算法是算法面试的重点内容
 
 ---
 
@@ -1652,67 +1830,192 @@ public class HttpClientDemo {
 JDBC（Java Database Connectivity）是 Java 访问数据库的标准接口。
 
 **JDBC操作步骤：**
-1. 注册驱动（MySQL 8.0+ 可省略）
-2. 建立连接
-3. 创建 Statement/PreparedStatement
-4. 执行SQL
-5. 处理结果
-6. 关闭资源
+1. 建立连接
+2. 创建 Statement/PreparedStatement
+3. 执行SQL
+4. 处理结果
+5. 关闭资源
 
+**实际代码使用 SQLite（无需额外安装数据库）：**
 ```java
 public class JdbcDemo {
-    // 数据库连接信息
-    private static final String URL = "jdbc:mysql://localhost:3306/testdb";
-    private static final String USER = "username";
-    private static final String PASSWORD = "password";
-  
+    // SQLite连接（无需用户名密码，直接创建本地文件）
+    private static final String URL = "jdbc:sqlite:example.db";
+
     public static void main(String[] args) {
         Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-      
         try {
-            // 注册驱动（MySQL 8.0+可省略）
-            Class.forName("com.mysql.cj.jdbc.Driver");
-          
-            // 建立连接
-            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            // 建立连接（SQLite不需要显式注册驱动）
+            conn = DriverManager.getConnection(URL);
             System.out.println("数据库连接成功");
-          
-            // 创建PreparedStatement（防止SQL注入）
-            String sql = "SELECT id, name, age FROM users WHERE age > ?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, 18);  // 设置参数
-          
-            // 执行查询
-            rs = pstmt.executeQuery();
-          
-            // 处理结果
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                int age = rs.getInt("age");
-                System.out.println("ID: " + id + ", 姓名: " + name + ", 年龄: " + age);
-            }
-          
-            // 执行更新操作
-            String updateSql = "INSERT INTO users (name, age) VALUES (?, ?)";
-            pstmt = conn.prepareStatement(updateSql);
+
+            // 创建表（SQLite使用AUTOINCREMENT，MySQL使用AUTO_INCREMENT）
+            String createTableSQL = "CREATE TABLE IF NOT EXISTS users " +
+                "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)";
+            conn.createStatement().execute(createTableSQL);
+
+            // 插入数据（使用PreparedStatement防止SQL注入）
+            String insertSQL = "INSERT INTO users (name, age) VALUES (?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(insertSQL);
             pstmt.setString(1, "张三");
             pstmt.setInt(2, 25);
-            int affectedRows = pstmt.executeUpdate();
-            System.out.println("插入成功，影响行数: " + affectedRows);
-          
-        } catch (ClassNotFoundException | SQLException e) {
+            pstmt.executeUpdate();
+
+            // 查询数据
+            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM users");
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") +
+                    ", Name: " + rs.getString("name") +
+                    ", Age: " + rs.getInt("age"));
+            }
+
+            rs.close();
+            pstmt.close();
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            // 关闭资源（逆序关闭）
-            try { if (rs != null) rs.close(); } catch (SQLException e) {}
-            try { if (pstmt != null) pstmt.close(); } catch (SQLException e) {}
-            try { if (conn != null) conn.close(); } catch (SQLException e) {}
+            try {
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
+```
+
+**SQLite vs MySQL 差异：**
+| 特性 | SQLite | MySQL |
+|------|--------|-------|
+| 连接URL | `jdbc:sqlite:文件名` | `jdbc:mysql://主机:端口/数据库` |
+| 用户名密码 | 不需要 | 需要 |
+| 自增主键 | `AUTOINCREMENT` | `AUTO_INCREMENT` |
+| 驱动注册 | 不需要 | `Class.forName("com.mysql.cj.jdbc.Driver")` |
+
+**注意事项：**
+- 本示例使用 SQLite，无需安装额外数据库
+- 实际项目中推荐使用连接池（如 HikariCP）
+- 务必使用 `try-with-resources` 或 `finally` 块关闭资源
+
+---
+
+## 🏗️ 第十三部分：框架入门（对应 frameworks/）
+
+### 13.1 Spring IOC/DI（SpringDemo.java）
+
+Spring 框架的核心是 **IOC（控制反转）** 和 **DI（依赖注入）**。
+
+**核心概念：**
+- **IOC**：对象的创建和管理由 Spring 容器负责，而不是程序员手动 `new`
+- **DI**：容器自动将依赖的对象注入到需要的地方
+
+**实际代码使用 Java 配置方式：**
+```java
+public class SpringDemo {
+
+    // 配置类：告诉 Spring 如何创建 Bean
+    @Configuration
+    public static class AppConfig {
+
+        @Bean
+        public MessageService messageService() {
+            return new MessageServiceImpl();
+        }
+
+        @Bean
+        public MessagePrinter messagePrinter() {
+            return new MessagePrinter(messageService());
+        }
+    }
+
+    // 服务接口
+    public interface MessageService {
+        String getMessage();
+    }
+
+    // 服务实现
+    public static class MessageServiceImpl implements MessageService {
+        @Override
+        public String getMessage() {
+            return "Hello Spring!";
+        }
+    }
+
+    // 消费者：通过构造方法注入依赖
+    public static class MessagePrinter {
+        private final MessageService service;
+
+        public MessagePrinter(MessageService service) {
+            this.service = service;
+        }
+
+        public void printMessage() {
+            System.out.println(service.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        // 创建 Spring 应用上下文
+        AnnotationConfigApplicationContext context =
+            new AnnotationConfigApplicationContext(AppConfig.class);
+
+        // 从容器获取 Bean
+        MessagePrinter printer = context.getBean(MessagePrinter.class);
+
+        // 使用 Bean
+        printer.printMessage();
+
+        // 关闭上下文
+        context.close();
+    }
+}
+```
+
+**依赖注入的三种方式（扩展知识）：**
+```java
+// 1. 构造方法注入（推荐）
+public class Service {
+    private final Dependency dep;
+    public Service(Dependency dep) { this.dep = dep; }
+}
+
+// 2. Setter 注入
+public class Service {
+    private Dependency dep;
+    public void setDep(Dependency dep) { this.dep = dep; }
+}
+
+// 3. 字段注入（使用 @Autowired）
+public class Service {
+    @Autowired
+    private Dependency dep;
+}
+```
+
+**常用注解（扩展知识）：**
+| 注解 | 说明 |
+|------|------|
+| `@Configuration` | 配置类 |
+| `@Bean` | 定义 Bean |
+| `@Component` | 通用组件 |
+| `@Service` | 服务层 |
+| `@Repository` | 数据访问层 |
+| `@Controller` | 控制器层 |
+| `@Autowired` | 自动注入 |
+
+**注意事项：**
+- 本示例使用 `@Configuration` + `@Bean` 的 Java 配置方式
+- 实际项目中通常使用 `@Component` + `@Autowired` 的注解方式
+- 运行此代码需要添加 Spring 依赖（Maven/Gradle）
+- 代码中的类都是静态内部类，这是简化的演示方式
+
+**Maven 依赖：**
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>5.3.30</version>
+</dependency>
 ```
 
 ---
@@ -1762,9 +2065,12 @@ public class JdbcDemo {
 ### 第5周：数据结构
 ```
 ├── ArraysDemo.java          # 数组
+├── ArrayListDemo.java       # ArrayList详解
 ├── CollectionDemo.java      # 集合框架
 ├── QueueStackDemo.java      # 队列与栈
-└── MapDetailsDemo.java      # Map详解
+├── MapDetailsDemo.java      # Map详解
+├── BinaryTreeDemo.java      # 二叉树
+└── GraphDemo.java           # 图
 ```
 
 ### 第6周：异常处理与IO
@@ -1816,6 +2122,11 @@ public class JdbcDemo {
 ### 第12周：数据库操作
 ```
 └── JdbcDemo.java            # JDBC基础
+```
+
+### 第13周：框架入门
+```
+└── SpringDemo.java          # Spring IOC/DI
 ```
 
 ---
