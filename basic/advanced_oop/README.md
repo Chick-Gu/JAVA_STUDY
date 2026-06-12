@@ -97,62 +97,76 @@ public class DoubleCheckedSingleton {
 }
 ```
 
-### 静态内部类（推荐）
+### 静态内部类（推荐，扩展知识）
 
 ```java
 public class StaticInnerSingleton {
     private StaticInnerSingleton() {}
-    
+
     private static class Holder {
-        private static final StaticInnerSingleton INSTANCE = 
+        private static final StaticInnerSingleton INSTANCE =
             new StaticInnerSingleton();
     }
-    
+
     public static StaticInnerSingleton getInstance() {
         return Holder.INSTANCE;
     }
 }
 ```
 
+**实际代码（SingletonDemo.java）实现了三种单例：**
+1. 饿汉式（EagerSingleton）
+2. 懒汉式 + 双重检查锁（LazySingleton）
+3. 枚举单例（EnumSingleton）— 最简洁，天然防止反射和序列化攻击
+
 ## 工厂模式 (Factory)
 
 ### 简单工厂（静态工厂）
 
+**实际代码（FactoryPatternDemo.java）使用 switch-case：**
 ```java
 // 产品接口
-public interface Phone {
-    void makeCall();
+public interface Product {
+    String getName();
 }
 
-// 具体产品
-public class IPhone implements Phone {
+// 具体产品（静态内部类）
+public static class ProductA implements Product {
     @Override
-    public void makeCall() {
-        System.out.println("用iPhone打电话");
-    }
+    public String getName() { return "产品A"; }
 }
 
-public class AndroidPhone implements Phone {
+public static class ProductB implements Product {
     @Override
-    public void makeCall() {
-        System.out.println("用安卓手机打电话");
-    }
+    public String getName() { return "产品B"; }
 }
 
 // 简单工厂
-public class SimplePhoneFactory {
-    public static Phone createPhone(String type) {
-        return switch (type) {
-            case "iphone" -> new IPhone();
-            case "android" -> new AndroidPhone();
-            default -> throw new IllegalArgumentException("未知类型");
-        };
+public static class ProductFactory {
+    public static Product createProduct(String type) {
+        switch (type) {
+            case "A": return new ProductA();
+            case "B": return new ProductB();
+            default: throw new IllegalArgumentException("未知产品类型: " + type);
+        }
     }
 }
-
-// 使用
-Phone phone = SimplePhoneFactory.createPhone("iphone");
 ```
+
+**Java 14+ 箭头表达式写法（需要 JDK 14+）：**
+```java
+public static Product createProduct(String type) {
+    return switch (type) {
+        case "A" -> new ProductA();
+        case "B" -> new ProductB();
+        default -> throw new IllegalArgumentException("未知产品类型");
+    };
+}
+```
+
+**注意事项：**
+- 实际代码中的产品类是**静态内部类**，这是简化演示的方式
+- 简单工厂不属于 23 种设计模式，但很常用
 
 ### 工厂方法模式
 
@@ -284,7 +298,7 @@ class Bird implements Flyable {
 }
 ```
 
-## 设计原则 (SOLID)
+## 设计原则 (SOLID)（扩展知识）
 
 | 原则 | 全称 | 说明 |
 |------|------|------|

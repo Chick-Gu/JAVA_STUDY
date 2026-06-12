@@ -19,6 +19,8 @@ JAVA/
 │   ├── concurrency/          # 并发编程
 │   ├── jvm/                  # JVM 原理
 │   ├── network/              # 网络编程
+│   ├── database/             # 数据库操作
+│   ├── frameworks/           # 框架入门
 │   ├── README.md             # Java 学习指南
 │   ├── tutorial.html         # 可视化教程
 │   └── run.bat               # 运行脚本
@@ -39,20 +41,24 @@ JAVA/
 | IO 操作 | 文件读写、序列化 | `io_operations/` |
 
 ### 二、Java 进阶
-| 模块 | 内容 | 文件 |
-|------|------|------|
-| 高级语法 | 泛型、Lambda、Stream API | `advanced_syntax/` |
-| 设计模式 | 单例、工厂等模式 | `advanced_oop/` |
-| 并发编程 | 多线程、线程池 | `concurrency/` |
-| JVM 原理 | 内存模型、垃圾回收 | `jvm/` |
-| 网络编程 | Socket 编程 | `network/` |
+| 模块 | 内容 | 文件 | 最低版本 |
+|------|------|------|----------|
+| 高级语法 | 泛型、Lambda、Stream API、枚举 | `advanced_syntax/` | JDK 8 |
+| 设计模式 | 单例、工厂等模式 | `advanced_oop/` | JDK 8 |
+| 并发编程 | 多线程、线程池、CompletableFuture | `concurrency/` | JDK 8 |
+| JVM 原理 | 内存模型、垃圾回收、类加载 | `jvm/` | JDK 8 |
+| 网络编程 | Socket、HttpClient | `network/` | JDK 11 |
+| 数据库 | JDBC、SQLite | `database/` | JDK 8 |
+| 框架 | Spring IOC/DI | `frameworks/` | JDK 8 |
 
 ---
 
 ## 🚀 快速开始
 
 ### 1. 环境要求
-- JDK 8 或更高版本
+- **基础模块**：JDK 8 或更高版本
+- **网络编程（HttpClient）**：需要 JDK 11+
+- **部分 IO 操作（Files.writeString）**：需要 JDK 11+
 - Git
 - 代码编辑器（IntelliJ IDEA / Eclipse / VS Code）
 
@@ -83,10 +89,12 @@ python -m http.server 8000
 
 | 阶段 | 时间 | 学习内容 |
 |------|------|----------|
-| 第一阶段 | 1-2 周 | Java 基础语法 |
-| 第二阶段 | 2-3 周 | 面向对象编程 |
-| 第三阶段 | 2-3 周 | 数据结构与算法 |
-| 第四阶段 | 2-3 周 | 高级特性与并发 |
+| 第一阶段 | 1-2 周 | 基础语法、类型转换、控制流程 |
+| 第二阶段 | 2-3 周 | 面向对象、异常处理 |
+| 第三阶段 | 2-3 周 | 数据结构、IO 操作 |
+| 第四阶段 | 2-3 周 | 高级语法（泛型、Lambda、Stream、枚举） |
+| 第五阶段 | 2-3 周 | 并发编程、JVM 原理 |
+| 第六阶段 | 1-2 周 | 网络编程、数据库、框架入门 |
 
 ---
 

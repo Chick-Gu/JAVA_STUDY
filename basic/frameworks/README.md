@@ -52,13 +52,30 @@ Spring容器 ──注入──▶ A对象  // 容器创建和管理
 
 ### 2. DI (依赖注入)
 
-容器自动注入对象所需的依赖，有三种方式：
+**实际代码（SpringDemo.java）使用 @Configuration + @Bean：**
+```java
+@Configuration
+public static class AppConfig {
+
+    @Bean
+    public MessageService messageService() {
+        return new MessageServiceImpl();
+    }
+
+    @Bean
+    public MessagePrinter messagePrinter() {
+        return new MessagePrinter(messageService());
+    }
+}
+```
+
+**依赖注入的三种方式（扩展知识）：**
 
 **构造方法注入** (推荐):
 ```java
 public class UserService {
     private UserDao userDao;
-    
+
     public UserService(UserDao userDao) {
         this.userDao = userDao;
     }
@@ -69,7 +86,7 @@ public class UserService {
 ```java
 public class UserService {
     private UserDao userDao;
-    
+
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
@@ -84,7 +101,12 @@ public class UserService {
 }
 ```
 
-### 3. AOP (面向切面编程)
+**注意事项**：
+- 实际代码使用 `@Configuration` + `@Bean` 的 Java 配置方式
+- 实际项目中通常使用 `@Component` + `@Autowired` 的注解方式
+- 运行代码需要添加 Spring 依赖（Maven/Gradle）
+
+### 3. AOP (面向切面编程)（扩展知识）
 
 分离横切关注点，如日志、事务、安全等。
 
@@ -109,6 +131,8 @@ public class UserService {
 │  └─ 环绕通知 (Around)              │
 └────────────────────────────────────┘
 ```
+
+**注意**：AOP 在实际代码中未演示，属于扩展知识
 
 ## Spring模块
 
@@ -168,6 +192,18 @@ public class UserService {
 3. 使用@ComponentScan指定扫描包
 4. 配置类使用@Configuration而非@Component
 5. 避免字段注入（难以单元测试）
+
+## Maven 依赖
+
+运行 SpringDemo.java 需要添加以下依赖：
+
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>5.3.30</version>
+</dependency>
+```
 
 ## 扩展学习
 

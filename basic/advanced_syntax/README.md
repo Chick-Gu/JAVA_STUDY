@@ -281,6 +281,52 @@ System.out.println(stringList.getClass() == intList.getClass()); // true
 
 ## 枚举
 
+### 实际代码示例（EnumDemo.java）
+
+```java
+public enum Weekday {
+    MONDAY("星期一", 1),
+    TUESDAY("星期二", 2),
+    WEDNESDAY("星期三", 3),
+    THURSDAY("星期四", 4),
+    FRIDAY("星期五", 5),
+    SATURDAY("星期六", 6),
+    SUNDAY("星期日", 7);
+
+    private final String chineseName;
+    private final int dayNumber;
+
+    // 枚举构造方法隐式是 private
+    Weekday(String chineseName, int dayNumber) {
+        this.chineseName = chineseName;
+        this.dayNumber = dayNumber;
+    }
+
+    public String getChineseName() { return chineseName; }
+    public int getDayNumber() { return dayNumber; }
+
+    public boolean isWeekend() {
+        return this == SATURDAY || this == SUNDAY;
+    }
+}
+
+// 使用枚举
+Weekday today = Weekday.MONDAY;
+System.out.println("今天是: " + today.getChineseName());
+System.out.println("是周末吗? " + today.isWeekend());
+
+// 遍历枚举
+for (Weekday day : Weekday.values()) {
+    System.out.println(day.ordinal() + ": " + day.getChineseName());
+}
+```
+
+**枚举要点：**
+- 枚举常量在类加载时就已经创建好，使用时只是引用已存在的实例
+- 枚举构造方法隐式是 `private`，不能显式声明为 `public` 或 `protected`
+- `ordinal()` 返回枚举常量的序号（从0开始）
+- `values()` 返回所有枚举常量的数组
+
 ### 基础枚举
 
 ```java
@@ -301,30 +347,21 @@ public enum Planet {
     MERCURY(3.303e23, 2.4397e6),
     VENUS(4.869e24, 6.0518e6),
     EARTH(5.976e24, 6.371e6);
-    
+
     private final double mass;    // 质量
     private final double radius;  // 半径
-    
+
     Planet(double mass, double radius) {
         this.mass = mass;
         this.radius = radius;
     }
-    
-    public double getMass() {
-        return mass;
-    }
-    
-    public double getRadius() {
-        return radius;
-    }
-    
-    public double surfaceGravity() {
-        return G * mass / (radius * radius);
-    }
+
+    public double getMass() { return mass; }
+    public double getRadius() { return radius; }
 }
 ```
 
-### 抽象方法
+### 抽象方法（扩展知识）
 
 ```java
 public enum Operation {
@@ -340,12 +377,12 @@ public enum Operation {
     DIVIDE {
         public double apply(double x, double y) { return x / y; }
     };
-    
+
     public abstract double apply(double x, double y);
 }
 ```
 
-### EnumSet和EnumMap
+### EnumSet和EnumMap（扩展知识）
 
 ```java
 // EnumSet - 高效存储枚举值
@@ -355,3 +392,9 @@ EnumSet<Season> summer = EnumSet.of(Season.SUMMER, Season.AUTUMN);
 EnumMap<Season, String> descriptions = new EnumMap<>(Season.class);
 descriptions.put(Season.SPRING, "春天");
 ```
+
+**注意事项：**
+- 枚举类型天然适合表示固定常量集合（如星期、月份、状态等）
+- 枚举可以有字段、方法、构造方法
+- 枚举可以实现接口，但不能继承其他类
+- 枚举常量之间比较使用 `==` 即可，无需 `equals()`

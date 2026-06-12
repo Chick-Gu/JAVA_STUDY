@@ -120,7 +120,7 @@ public static synchronized void staticMethod() {
 }
 ```
 
-### volatile关键字
+### volatile关键字（扩展知识）
 
 保证变量的可见性（一个线程修改后，其他线程立即看到）
 
@@ -134,7 +134,7 @@ public void stop() {
 
 **注意**: volatile不保证原子性（如i++）
 
-### 线程安全类
+### 线程安全类（扩展知识）
 
 | 类 | 说明 |
 |----|------|
@@ -181,7 +181,7 @@ ThreadPoolExecutor executor = new ThreadPoolExecutor(
 - `DiscardPolicy`: 丢弃任务
 - `DiscardOldestPolicy`: 丢弃最老的任务
 
-## 同步工具
+## 同步工具（扩展知识）
 
 | 工具 | 作用 |
 |------|------|
@@ -190,6 +190,8 @@ ThreadPoolExecutor executor = new ThreadPoolExecutor(
 | `Semaphore` | 信号量，控制并发数量 |
 | `Exchanger` | 交换数据 |
 | `Phaser` | 阶段同步 |
+
+**注意**：以上同步工具在实际代码中未演示，属于扩展知识
 
 ## 最佳实践
 

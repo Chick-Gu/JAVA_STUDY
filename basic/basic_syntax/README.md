@@ -79,6 +79,23 @@ int i = s1 + s2;   // 结果是int，不是short
 String s = "Hello" + 123;  // "Hello123"
 ```
 
+### char 与 int 转换
+
+```java
+// char 转 int（获取ASCII码）
+char c = 'A';
+int ascii = (int) c;  // 65
+
+// int 转 char（从ASCII码转换）
+int num = 65;
+char ch = (char) num;  // 'A'
+
+// char 参与运算
+char letter = 'A';
+int result = letter + 1;  // 66
+char next = (char) (letter + 1);  // 'B'
+```
+
 ## 字符串操作
 
 ### String常用方法
@@ -133,6 +150,27 @@ sb.append(" World");  // 高效
 StringBuffer sbf = new StringBuffer();  // 同步，稍慢
 ```
 
+### StringBuilder 常用方法
+
+```java
+StringBuilder sb = new StringBuilder("Hello");
+
+// 插入
+sb.insert(5, " World");  // "Hello World"
+
+// 反转
+sb.reverse();  // "dlroW olleH"
+
+// 替换
+sb.replace(0, 5, "Hi");  // "Hi World"
+
+// 删除
+sb.delete(2, 5);  // "Hiorld"
+
+// 获取长度
+int len = sb.length();
+```
+
 ## 运算符
 
 ### 算术运算符
@@ -165,6 +203,26 @@ StringBuffer sbf = new StringBuffer();  // 同步，稍慢
 | && | 逻辑与 | 是 |
 | \|\| | 逻辑或 | 是 |
 | ! | 逻辑非 | - |
+| & | 逻辑与（非短路） | 否 |
+| \| | 逻辑或（非短路） | 否 |
+| ^ | 逻辑异或 | - |
+
+**短路与非短路的区别：**
+```java
+// 短路运算符（&&、||）：如果第一个条件能确定结果，不会计算第二个条件
+if (x != 0 && 10 / x > 2) { ... }  // x为0时不会执行除法
+
+// 非短路运算符（&、|）：总是计算两个条件
+if (x != 0 & 10 / x > 2) { ... }   // x为0时会抛出异常
+```
+
+### 三元运算符
+
+```java
+// 语法：条件 ? 值1 : 值2
+int max = (a > b) ? a : b;
+String result = (score >= 60) ? "及格" : "不及格";
+```
 
 ### 位运算符
 

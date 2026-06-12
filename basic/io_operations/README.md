@@ -68,12 +68,19 @@ bw.close();
 
 ### 2. NIO (java.nio)
 
-New IO，提供非阻塞式IO操作，核心组件：
+**实际代码使用 NIO.2（Java 7+）的 Files 工具类：**
+```java
+// 读取所有行
+List<String> lines = Files.readAllLines(Path.of("test.txt"));
 
-- **Buffer**: 缓冲区，用于读写数据
-- **Channel**: 通道，类似流但可双向操作
-- **Selector**: 选择器，用于多路复用
+// 读取所有字节
+byte[] bytes = Files.readAllBytes(Path.of("test.txt"));
 
+// 写入字符串（Java 11+）
+Files.writeString(Path.of("test.txt"), "Hello");
+```
+
+**传统 NIO（FileChannel + ByteBuffer）：**
 ```java
 // 使用NIO读取文件
 FileInputStream fis = new FileInputStream("test.txt");
@@ -95,6 +102,10 @@ channel.close();
 | 阻塞 | 阻塞式 | 非阻塞式 |
 | 模式 | 同步 | 同步/异步 |
 | 适用 | 简单场景 | 高并发 |
+
+**注意事项**：
+- 实际代码使用 `Files.writeString()`，这是 **Java 11+** 的 API
+- NIO.2（java.nio.file）比传统 NIO 更易用，推荐优先使用
 
 ### 3. 序列化 (Serialization)
 
